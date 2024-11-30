@@ -1,0 +1,40 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# 1. تحميل البيانات (تأكد من أن لديك ملف بيانات كرة القدم بصيغة CSV)
+# مثال على البيانات: team1_strength, team2_strength, home_advantage, result
+data = {
+    "team1_strength": [85, 78, 88, 92, 70],
+    "team2_strength": [80, 75, 82, 85, 60],
+    "home_advantage": [1, 0, 1, 0, 1],
+    "result": [1, 0, 1, 1, 0]  # 1 = فوز الفريق الأول، 0 = فوز الفريق الثاني
+}
+df = pd.DataFrame(data)
+
+# 2. تجهيز البيانات
+X = df[["team1_strength", "team2_strength", "home_advantage"]]
+y = df["result"]
+
+# تقسيم البيانات إلى تدريب واختبار
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# 3. تدريب النموذج
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+# 4. اختبار النموذج
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy * 100:.2f}%")
+
+# 5. توقع مباراة جديدة
+# بيانات المباراة الجديدة: قوة الفريق الأول، قوة الفريق الثاني، ميزة اللعب على أرضه
+new_match = [[90, 85, 1]]  # الفريق الأول أقوى ولديه ميزة الأرض
+prediction = model.predict(new_match)
+
+if prediction[0] == 1:
+    print("توقع: فوز الفريق الأول")
+else:
+    print("توقع: فوز الفريق الثاني")
